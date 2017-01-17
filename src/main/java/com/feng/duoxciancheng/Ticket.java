@@ -1,6 +1,10 @@
 package com.feng.duoxciancheng;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Ticket {
+	
+	private final ReentrantLock lock = new ReentrantLock();
 	
 	private Integer left;
 	
@@ -33,6 +37,21 @@ public class Ticket {
 			System.out.println(Thread.currentThread().getName() + "正在售票，这是票" + this.getLeft());
 			this.setLeft(-- this.left);
 		}
+		return this.left;
+	}
+	
+	
+	public Integer saleByClock(){
+		
+		lock.lock();
+		
+		if(this.left > 0){
+			System.out.println(Thread.currentThread().getName() + "正在售票，这是票" + this.getLeft());
+			this.setLeft(-- this.left);
+		}
+		
+		lock.unlock();
+		
 		return this.left;
 	}
 	

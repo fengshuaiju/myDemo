@@ -1,19 +1,19 @@
 package com.feng.duoxciancheng;
 
-public class Sale2 implements Runnable{
+public class Sale3 implements Runnable{
 
 	
 	private Ticket ticketIn;
 	
-	private Sale2(){
+	private Sale3(){
 	}
 	
-	private Sale2(Ticket ticket){
+	private Sale3(Ticket ticket){
 		this.ticketIn = ticket;
 	}
 	
-	public static Sale2 getSale(Ticket ticket){
-		return new Sale2(ticket);
+	public static Sale3 getSale(Ticket ticket){
+		return new Sale3(ticket);
 	}
 	
 	

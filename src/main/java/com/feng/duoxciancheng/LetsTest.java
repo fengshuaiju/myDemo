@@ -12,13 +12,23 @@ public class LetsTest {
 //		slea1.start();
 //		slea2.start();
 		
-		//2:调用售票类的方法售票，同步锁加在售票方法上
+//		//2:调用售票类的方法售票，同步锁加在售票方法上
+//		Ticket ticket = new Ticket(10,"春节回家的票");
+//		Sale2 sale = Sale2.getSale(ticket);
+//		Thread slea1 = new Thread(sale,"售票员GG");
+//		Thread slea2 = new Thread(sale,"售票员MM");
+//		slea1.start();
+//		slea2.start();
+		
+		
+		//3:clock同步锁
 		Ticket ticket = new Ticket(10,"春节回家的票");
-		Sale2 sale = Sale2.getSale(ticket);
+		Sale3 sale = Sale3.getSale(ticket);
 		Thread slea1 = new Thread(sale,"售票员GG");
 		Thread slea2 = new Thread(sale,"售票员MM");
 		slea1.start();
 		slea2.start();
+		
 	}
 	
 }
