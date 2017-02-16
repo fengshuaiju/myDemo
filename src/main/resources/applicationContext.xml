@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans
-	xmlns="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
@@ -11,8 +10,9 @@
         http://www.springframework.org/schema/aop 
        	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
         
-    <!-- 读取properties 文件 -->
+    <!-- 读取properties 文件  下边配置了  <beans profile="dev">  之后 也可以读取到 .properties 里的文件 -->
     <context:property-placeholder location="classpath:env/${system.envid}.properties"/>  
+    
 	<!-- 启用注解 -->
 	<context:annotation-config/>
 	<!-- 扫描包 -->
@@ -20,20 +20,53 @@
 	
 	<aop:aspectj-autoproxy />
 	
+	<!-- 这个用来测试，在下边的 profiles里能否正常加载到.properties文件中的内容 -->
+	<bean class="${maven.test}"></bean>
 	
+	
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+    	<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+        <constructor-arg name="host" value="${redis_host}" />    
+        <constructor-arg name="port" value="${redis_port}" />
+        <constructor-arg name="timeout" value="${redis_timeout}"/>
+    	<constructor-arg name= "password" value="${redis_password}"/>
+    </bean>
+    
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+	    <property name="maxTotal" value="1000"/> <!-- 控制一个pool可分配多少个jedis实例   -->  
+	    <property name="maxIdle" value="200" />   <!-- 控制一个pool最多有多少个状态为idle(空闲)的jedis实例 -->  
+	    <property name="maxWaitMillis" value="10000" />  <!-- 表示当borrow一个jedis实例时，最大的等待时间，如果超过等待时间，则直接抛出JedisConnectionException -->  
+	    <property name="testOnBorrow" value="true" /> <!-- 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的 -->  
+	</bean>
+	
+	
+	<!-- beans下边不能在配置 bean项，不然不能被加载 -->
 	<beans profile="local">
-		<!-- <context:property-placeholder
-			location="classpath:evn/local.properties"
-			system-properties-mode="OVERRIDE" /> -->
-		<context:property-placeholder location="classpath:env/local.properties"/>  
+		<context:property-placeholder location="classpath:env/local.properties"/>
+		
+		<bean id="propertyConfigurer" class="com.example.MySystemPropertyLoader">
+			<!-- <property name="ignoreUnresolvablePlaceholders" value="true" /> -->
+			<property name="locations">
+				<list>
+					<!-- value可配置多个选项 -->
+					<value>classpath:env/local.properties</value>
+				</list>
+			</property>
+		</bean>
 	</beans>
 	
 	<beans profile="dev">
-		<!-- <context:property-placeholder
-			location="classpath:evn/dev.properties"
-			system-properties-mode="OVERRIDE" /> -->
-		<context:property-placeholder location="classpath:env/dev.properties"/>  
+		<context:property-placeholder location="classpath:env/dev.properties"/>
+		
+		<bean id="propertyConfigurer" class="com.example.MySystemPropertyLoader">
+			<!-- <property name="ignoreUnresolvablePlaceholders" value="true" /> -->
+			<property name="locations">
+				<list>
+					<!-- value可配置多个选项 -->
+					<value>classpath:env/dev.properties</value>
+				</list>
+			</property>
+		</bean>
 	</beans>
-	
 	
 </beans>
